@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Room Environment Monitor</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+    <h1>Room Environment Monitor</h1>
+    <h3>Temperature: <span id="temperature">--</span> °C</h3>
+    <h3>Humidity: <span id="humidity">--</span> %</h3>
+    <canvas id="environmentChart" width="600" height="300"></canvas>
+
+    <script>
+        // Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAjp44g0-FgBdApmYnR_RXMJSfkIVdmopw",
+            authDomain: "farmer-help-8e7d9.firebaseapp.com",
+            databaseURL: "https://farmer-help-8e7d9-default-rtdb.firebaseio.com",
+            projectId: "farmer-help-8e7d9",
+            storageBucket: "farmer-help-8e7d9.appspot.com",
+            messagingSenderId: "971526485142",
+            appId: "1:971526485142:web:567a72541db069ff9b3eb7",
+            measurementId: "G-1S90RNZ19T"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        const db = firebase.database();
+        const sensorRef = db.ref('sensor');
+
+        const temperatureSpan = document.getElementById('temperature');
+        const humiditySpan = document.getElementById('humidity');
+        const ctx = document.getElementById('environmentChart').getContext('2d');
+
+        const timestamps = [];
+        const temperatures = [];
+        const humidities = [];
+
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: timestamps,
+                datasets: [
+                    {
+                        label: 'Temperature (°C)',
+                        data: temperatures,
+                        borderColor: 'red',
+                        fill: false
+                    },
+                    {
+                        label: 'Humidity (%)',
+                        data: humidities,
+                        borderColor: 'blue',
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Value'
+                        }
+                    }
+                }
+            }
+        });
+
+        function updateChart(temp, humidity) {
+            const now = new Date().toLocaleTimeString();
+            timestamps.push(now);
+            temperatures.push(temp);
+            humidities.push(humidity);
+            if (timestamps.length > 20) {
+                timestamps.shift();
+                temperatures.shift();
+                humidities.shift();
+            }
+            chart.update();
+        }
+
+        // Fetch real-time data from Firebase and post to MongoDB
+        sensorRef.on('value', async (snapshot) => {
+            const data = snapshot.val();
+            if (data && data.temperature && data.humidity) {
+                temperatureSpan.textContent = data.temperature;
+                humiditySpan.textContent = data.humidity;
+                updateChart(data.temperature, data.humidity);
+
+                // POST to MongoDB
+                await fetch('http://localhost:3000/api/data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        temperature: data.temperature,
+                        humidity: data.humidity
+                    })
+                });
+            }
+        });
+    </script>
+</body>
+</html>
