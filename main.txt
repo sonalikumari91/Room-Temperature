@@ -1,2 +1,5 @@
+
 npm init -y
 npm install express mongoose cors
+ 
+** make a folder name "public" -> then cut paste the "index.html" file inside "public" folder.
