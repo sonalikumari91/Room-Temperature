@@ -3,15 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>Room Environment Monitor</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
-    <h1>Room Environment Monitor</h1>
-    <h3>Temperature: <span id="temperature">--</span> °C</h3>
-    <h3>Humidity: <span id="humidity">--</span> %</h3>
-    <canvas id="environmentChart" width="600" height="300"></canvas>
+    <button class="toggle-mode" onclick="document.body.classList.toggle('light-mode')">
+        Toggle Mode
+    </button>
+    <h1>Room Environment Monitor 301</h1>
+    <div class="sensor-cards">
+        <h3>Temperature: <span id="temperature">--</span> °C</h3>
+        <h3>Humidity: <span id="humidity">--</span> %</h3>
+    </div>
+    <div class="chart-container">
+        <canvas id="environmentChart"></canvas>
+    </div>
 
     <script>
         // Firebase config
@@ -47,33 +56,111 @@
                         label: 'Temperature (°C)',
                         data: temperatures,
                         borderColor: 'red',
-                        fill: false
+                        //fill: false,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#000',
+                        pointHoverBackgroundColor: 'red', // change to 'blue' for humidity
                     },
                     {
                         label: 'Humidity (%)',
                         data: humidities,
                         borderColor: 'blue',
-                        fill: false
+                        fill: false,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#000',
+                        pointHoverBackgroundColor: 'blue', // change to 'red' for temperature
                     }
                 ]
             },
             options: {
+                animation: {
+                    duration: 1000,
+                    easing: 'easeInOutCubic'
+                },
                 responsive: true,
+                maintainAspectRatio: false,
+                elements: {
+                    line: {
+                    tension: 0.4, // smooth curves
+                    borderWidth: 3
+                    },
+                    point: {
+                    radius: 4,
+                    hoverRadius: 6,
+                    backgroundColor: '#fff',
+                    borderColor: '#888',
+                    borderWidth: 2
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                    enabled: true,
+                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    borderColor: '#fff',
+                    borderWidth: 1
+                    },
+                    legend: {
+                    labels: {
+                        color: '#E0E0E0',
+                        font: {
+                        family: 'Poppins',
+                        weight: '600',
+                        size: 14
+                        }
+                    }
+                    }
+                },
                 scales: {
                     x: {
-                        title: {
-                            display: true,
-                            text: 'Time'
+                    title: {
+                        display: true,
+                        text: 'Time',
+                        color: '#fff',
+                        font: {
+                        family: 'Poppins',
+                        weight: '600',
+                        size: 14
                         }
                     },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Value'
+                    ticks: {
+                        color: '#fff',
+                        font: {
+                        family: 'Poppins',
+                        size: 12
                         }
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    }
+                    },
+                    y: {
+                    title: {
+                        display: true,
+                        text: 'Value',
+                        color: '#fff',
+                        font: {
+                            family: 'Poppins',
+                            weight: '600',
+                            size: 14
+                        }
+                    },
+                    ticks: {
+                        color: '#fff',
+                        font: {
+                            family: 'Poppins',
+                            size: 12
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
                     }
                 }
             }
+        }
         });
 
         function updateChart(temp, humidity) {
@@ -93,8 +180,21 @@
         sensorRef.on('value', async (snapshot) => {
             const data = snapshot.val();
             if (data && data.temperature && data.humidity) {
+                // temperatureSpan.textContent = data.temperature;
+                // humiditySpan.textContent = data.humidity;
+                
                 temperatureSpan.textContent = data.temperature;
                 humiditySpan.textContent = data.humidity;
+
+                // Animate update
+                temperatureSpan.classList.add("value-update");
+                humiditySpan.classList.add("value-update");
+
+                // Remove animation after short delay
+                setTimeout(() => {
+                    temperatureSpan.classList.remove("value-update");
+                    humiditySpan.classList.remove("value-update");
+                }, 500);
                 updateChart(data.temperature, data.humidity);
 
                 // POST to MongoDB

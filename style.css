@@ -1,4 +1,4 @@
-body {
+/* body {
     font-family: sans-serif;
     margin: 0;
     background-color: #f4f4f4;
@@ -7,7 +7,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-}
+} */
 
 .container {
     background-color: #fff;
@@ -77,3 +77,323 @@ footer {
     color: #777;
     font-size: 0.9em;
 }
+
+body {
+    margin: 0;
+    padding: 40px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #2b0f5c, #461380);
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+h1 {
+    font-size: 2.8em;
+    font-weight: 700;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* Sensor Cards Wrapper */
+.sensor-cards {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    width: 100%;
+    max-width: 1000px;
+    margin-bottom: 40px;
+}
+
+/* Sensor Card Style */
+h3 {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 20px 30px;
+    font-size: 1.3em;
+    width: 300px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: transform 0.3s ease;
+}
+
+h3:hover {
+    transform: translateY(-5px);
+}
+
+#temperature, #humidity {
+    display: block;
+    font-size: 2em;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+#temperature {
+    color: #f87171;
+}
+
+#humidity {
+    color: #60a5fa;
+}
+
+/* Chart Styling */
+canvas {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 20px;
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ============ Responsive Breakpoints ============ */
+
+@media (max-width: 1024px) {
+    body {
+        padding: 30px;
+    }
+
+    h1 {
+        font-size: 2.4em;
+    }
+
+    h3 {
+        width: 45%;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 2em;
+    }
+
+    h3 {
+        width: 100%;
+        text-align: center;
+    }
+
+    #temperature, #humidity {
+        font-size: 1.8em;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.6em;
+    }
+
+    h3 {
+        padding: 15px 20px;
+        font-size: 1.1em;
+    }
+
+    #temperature, #humidity {
+        font-size: 1.5em;
+    }
+
+    canvas {
+        padding: 10px;
+    }
+}
+/* === Light/Dark Mode Toggle === */
+body.light-mode {
+    background: linear-gradient(135deg, #e0e7ff, #f9fafb);
+    color: #1f2937;
+}
+
+body.light-mode h3 {
+    background: rgba(255, 255, 255, 0.7);
+    color: #1f2937;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode #temperature {
+    color: #dc2626;
+}
+
+body.light-mode #humidity {
+    color: #2563eb;
+}
+
+body.light-mode canvas {
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* === Toggle Button Style === */
+.toggle-mode {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #ffffff22;
+    color: #ffffff;
+    border: 1px solid #ffffff44;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: background 0.3s, transform 0.3s;
+    z-index: 1000;
+}
+
+.toggle-mode:hover {
+    background: #ffffff44;
+    transform: scale(1.05);
+}
+
+body.light-mode .toggle-mode {
+    background: #f1f5f9;
+    color: #1f2937;
+    border: 1px solid #cbd5e1;
+}
+
+h3:nth-of-type(1)::before {
+    content: "🌡️ ";
+    font-size: 1.2em;
+    margin-right: 6px;
+}
+
+h3:nth-of-type(2)::before {
+    content: "💧 ";
+    font-size: 1.2em;
+    margin-right: 6px;
+}
+
+body {
+    animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+h3 {
+    animation: slideUpFade 1s ease-in-out;
+}
+
+@keyframes slideUpFade {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.value-update {
+    animation: pulse 0.5s ease;
+}
+
+@keyframes pulse {
+    0% {
+        background-color: rgba(255, 255, 255, 0.2);
+        transform: scale(1.05);
+    }
+    100% {
+        background-color: transparent;
+        transform: scale(1);
+    }
+}
+
+.value-update {
+  animation: glowFade 0.5s ease;
+}
+
+@keyframes glowFade {
+  0% {
+    background-color: rgba(255, 255, 0, 0.3);
+    color: #ff6b6b;
+    transform: scale(1.1);
+  }
+  50% {
+    background-color: rgba(255, 255, 0, 0.6);
+    transform: scale(1.15);
+  }
+  100% {
+    background-color: transparent;
+    color: inherit;
+    transform: scale(1);
+  }
+}
+
+.value-update {
+    animation: slideIn 0.4s ease;
+}
+  
+@keyframes slideIn {
+    0% {
+        transform: translateX(-10px);
+        opacity: 0;
+        color: #ff6b6b;
+    }
+    50% {
+        transform: translateX(2px);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(0);
+        color: inherit;
+    }
+}
+
+/* .chart-container {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    height: 400px;
+    margin: 0 auto;
+}
+  
+@media (max-width: 768px) {
+    .chart-container {
+      height: 300px;
+    }
+}
+  
+@media (max-width: 480px) {
+    .chart-container {
+      height: 250px;
+    }
+} */
+
+.chart-container {
+    width: 90%;
+    max-width: 800px;
+    /* height: 400px; */
+    margin: 20px auto;
+    padding: 20px;
+    background: #1B2251;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: center;    
+    align-items: center;
+  }
+  
+  @media (max-width: 600px) {
+    .chart-container {
+      height: 300px;
+      padding: 10px;
+    }
+  }
