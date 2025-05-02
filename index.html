@@ -180,8 +180,6 @@
         sensorRef.on('value', async (snapshot) => {
             const data = snapshot.val();
             if (data && data.temperature && data.humidity) {
-                // temperatureSpan.textContent = data.temperature;
-                // humiditySpan.textContent = data.humidity;
                 
                 temperatureSpan.textContent = data.temperature;
                 humiditySpan.textContent = data.humidity;
